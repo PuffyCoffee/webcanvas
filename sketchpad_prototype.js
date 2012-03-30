@@ -21,14 +21,10 @@
 		return new SketchPad(paper, options);
 	};
 
-	// Current version.
-	Raphael.sketchpad.VERSION = '0.5.1';
-
 	/**
 	 * The SketchPad object.
 	 */
 	var SketchPad = function(paper, options) {
-		// Use self to reduce confusion about this.
 		var self = this;
 
 		var _options = {
@@ -37,10 +33,8 @@
 			strokes : [],
 			editing : true
 		};
-		// *r jQuery.extend(_options, options);
 		Object.extend(_options, options);
 
-		// The Raphael context to draw on.
 		var _paper;
 		if (paper.raphael && paper.raphael.constructor == Raphael.constructor) {
 			_paper = paper;
@@ -49,20 +43,12 @@
 		} else {
 			throw "first argument must be a Raphael object, an element ID, an array with 3 elements";
 		}
-
-		// The Raphael SVG canvas.				
+			
 		var _canvas = _paper.canvas;
 		
-		// The HTML element that contains the canvas.
-		//bug #1 
-		//var _container = $(_canvas).parent();
 		var _container = $(paper);
 
-		// The default pen.
 		var _pen = new Pen();
-
-		// Public Methods
-		// -----------------
 
 		self.paper = function() {
 			return _paper;
@@ -81,13 +67,9 @@
 				return _pen;
 			}
 			_pen = value;
-			return self; // function-chaining
+			return self; 
 		};
 
-		// Convert an SVG path into a string, so that it's
-		// smaller when
-		// JSONified.
-		// This function is used by json().
 		function svg_path_to_string(path) {
 			var str = "";
 			for ( var i = 0, n = path.length; i < n; i++) {
@@ -96,8 +78,7 @@
 			}
 			return str;
 		}
-		// Convert a string into an SVG path. This reverses the
-		// above code.
+		
 		function string_to_svg_path(str) {
 			var path = [];
 			var tokens = str.split("L");
@@ -127,10 +108,8 @@
 						stroke.path = svg_path_to_string(stroke.path);
 					}
 				}
-				// *r return JSON.stringify(_strokes);
 				return Object.toJSON(_strokes);
 			}
-			// *r return self.strokes(JSON.parse(value));
 			return self.strokes(value.evalJSON(true));
 		};
 
@@ -138,7 +117,6 @@
 			if (value === undefined) {
 				return _strokes;
 			}
-			// *r if (jQuery.isArray(value)) {
 			if (Object.isArray(value)) {
 				_strokes = value;
 
@@ -151,17 +129,13 @@
 
 				_action_history.add({
 					type : "batch",
-					// *r strokes : jQuery.merge([], _strokes)
-					// Make a copy.
 					strokes : _strokes.clone()
-				// Return an anonymous array by calling prototype method
-				// array.clone()
 				});
 
 				_redraw_strokes();
 				_fire_change();
 			}
-			return self; // function-chaining
+			return self; 
 		};
 
 		self.freeze_history = function() {
@@ -179,7 +153,7 @@
 				_redraw_strokes();
 				_fire_change();
 			}
-			return self; // function-chaining
+			return self; 
 		};
 
 		self.redoable = function() {
@@ -193,7 +167,7 @@
 				_redraw_strokes();
 				_fire_change();
 			}
-			return self; // function-chaining
+			return self;
 		};
 
 		self.clear = function() {
@@ -205,7 +179,7 @@
 			_redraw_strokes();
 			_fire_change();
 
-			return self; // function-chaining
+			return self;
 		};
 
 		self.animate = function(ms) {
@@ -233,7 +207,7 @@
 				animate();
 			}
 
-			return self; // function-chaining
+			return self; 
 		};
 
 		self.editing = function(mode) {
@@ -244,11 +218,6 @@
 			_options.editing = mode;
 			if (_options.editing) {
 				if (_options.editing == "erase") {
-					// *r $(_container).css("cursor", "crosshair");
-					// *r $(_container).unbind("mousedown", _mousedown);
-					// *r $(_container).unbind("mousemove", _mousemove);
-					// *r $(_container).unbind("mouseup", _mouseup);
-					// *r $(document).unbind("mouseup", _mouseup);
 					$(_container).setStyle({
 						cursor : 'crosshair'
 					});
@@ -257,13 +226,11 @@
 					Event.stopObserving($(_container), 'mouseup', _mouseup);
 					Event.stopObserving($(document), 'mouseup', _mouseup);
 
-					// iPhone Events
+					
 					var agent = navigator.userAgent;
 					if (agent.indexOf("iPhone") > 0
-							|| agent.indexOf("iPod") > 0) {
-						// *r $(_container).unbind("touchstart", _touchstart);
-						// *r $(_container).unbind("touchmove", _touchmove);
-						// *r $(_container).unbind("touchend", _touchend);
+							|| agent.indexOf("iPod") > 0
+							|| agent.indexOf("iPad") > 0) {
 						Event.stopObserving($(_container), 'touchstart',
 								_touchstart);
 						Event.stopObserving($(_container), 'touchmove',
@@ -272,11 +239,6 @@
 								_touchend);
 					}
 				} else {
-					// *r $(_container).css("cursor", "crosshair");
-
-					// *r $(_container).mousedown(_mousedown);
-					// *r $(_container).mousemove(_mousemove);
-					// *r $(_container).mouseup(_mouseup);
 					$(_container).setStyle({
 						cursor : 'crosshair'
 					});
@@ -284,33 +246,18 @@
 					Event.observe($(_container), 'mousemove', _mousemove);
 					Event.observe($(_container), 'mouseup', _mouseup);
 
-					// Handle the case
-					// when the mouse is
-					// released outside
-					// the
-					// canvas.
-					// *r $(document).mouseup(_mouseup);
 					Event.observe($(document), 'mouseup', _mouseup);
 
-					// iPhone Events
 					var agent = navigator.userAgent;
 					if (agent.indexOf("iPhone") > 0
-							|| agent.indexOf("iPod") > 0) {
-						// *r $(_container).bind("touchstart", _touchstart);
-						// *r $(_container).bind("touchmove", _touchmove);
-						// *r $(_container).bind("touchend", _touchend);
+							|| agent.indexOf("iPod") > 0
+							|| agent.indexOf("iPad") > 0) {
 						Event.observe($(_container), 'touchstart', _touchstart);
 						Event.observe($(_container), 'touchmove', _touchmove);
 						Event.observe($(_container), 'touchend', _touchend);
 					}
 				}
 			} else {
-				// Reverse the settings above.
-				// *r $(_container).attr("style", "cursor:default");
-				// *r $(_container).unbind("mousedown", _mousedown);
-				// *r $(_container).unbind("mousemove", _mousemove);
-				// *r $(_container).unbind("mouseup", _mouseup);
-				// *r $(document).unbind("mouseup", _mouseup);
 				$(_container).setStyle({
 					cursor : 'default'
 				});
@@ -319,12 +266,9 @@
 				Event.stopObserving($(_container), 'mouseup', _mouseup);
 				Event.stopObserving($(document), 'mouseup', _mouseup);
 
-				// iPhone Events
 				var agent = navigator.userAgent;
-				if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0) {
-					// *r $(_container).unbind("touchstart", _touchstart);
-					// *r $(_container).unbind("touchmove", _touchmove);
-					// *r $(_container).unbind("touchend", _touchend);
+				if (agent.indexOf("iPhone") > 0 || agent.indexOf("iPod") > 0
+						|| agent.indexOf("iPad") > 0) {
 					Event.stopObserving($(_container), 'touchstart',
 							_touchstart);
 					Event.stopObserving($(_container), 'touchmove', _touchmove);
@@ -332,11 +276,8 @@
 				}
 			}
 
-			return self; // function-chaining
+			return self; 
 		};
-
-		// Change events
-		// ----------------
 
 		var _change_fn = function() {
 		};
@@ -351,11 +292,7 @@
 
 		function _fire_change() {
 			_change_fn();
-		}
-		;
-
-		// Miscellaneous methods
-		// ------------------
+		};
 
 		function _redraw_strokes() {
 			_paper.clear();
@@ -369,9 +306,6 @@
 		;
 
 		function _disable_user_select() {
-			// *r $("*").css("-webkit-user-select", "none");
-			// This part needs to be tested on IE and firefox, chrome works
-			// fine.
 			$$('div').each(function(d) {
 				d.setStyle({
 					"-webkit-user-select" : "none"
@@ -383,18 +317,10 @@
 					"user-select" : "none"
 				});
 			});
-			// *r $("*").css("-moz-user-select", "none");
-			// *r if (jQuery.browser.msie) {
-			// *r $("body").attr("onselectstart", "return false;");
-			// *r }
 		}
 
 		function _enable_user_select() {
-			/*
-			 * *r $("*").css("-webkit-user-select", "text");
-			 * $("*").css("-moz-user-select", "text"); if (jQuery.browser.msie) {
-			 * $("body").removeAttr("onselectstart"); }
-			 */
+			
 			$$('div').each(function(d) {
 				d.setStyle({
 					"-webkit-user-select" : "text"
@@ -407,10 +333,6 @@
 				});
 			});
 		}
-
-		// Event handlers
-		// -----------------
-		// We can only attach events to the container, so do it.
 
 		function _pathclick(e) {
 			if (_options.editing == "erase") {
@@ -451,15 +373,11 @@
 			var path = _pen.finish(e, self);
 
 			if (path != null) {
-				// Add event when clicked.
 				path.click(_pathclick);
 
-				// Save the stroke.
 				var stroke = path.attr();
 				stroke.type = path.type;
-
 				_strokes.push(stroke);
-
 				_action_history.add({
 					type : "stroke",
 					stroke : stroke
@@ -471,8 +389,6 @@
 		;
 
 		function _touchstart(e) {
-			// *r e = e.originalEvent;
-			// *r e.preventDefault();
 			Event.stop(e);
 
 			if (e.touches.length == 1) {
@@ -482,8 +398,6 @@
 		}
 
 		function _touchmove(e) {
-			// *r e = e.originalEvent;
-			// *r e.preventDefault();
 			Event.stop(e);
 			if (e.touches.length == 1) {
 				var touch = e.touches[0];
@@ -492,27 +406,18 @@
 		}
 
 		function _touchend(e) {
-			// *r e = e.originalEvent;
-			// *r e.preventDefault();
 			Event.stop(e);
 			_mouseup(e);
 		}
 
-		// Setup
-		// --------
-
 		var _action_history = new ActionHistory();
 		
-		// Path data
 		var _strokes = _options.strokes;
 		
-		//*r if (jQuery.isArray(_strokes) && _strokes.length > 0) {
 		if (Object.isArray(_strokes) && _strokes.length > 0) {
 			_action_history.add({
 				type : "init",
-				//*r strokes : jQuery.merge([], _strokes)
-				strokes : _strokes.clone()
-			// Make a clone.
+				strokes : _strokes.clone()			
 			});
 			_redraw_strokes();
 		} else {
@@ -528,18 +433,8 @@
 
 		var _history = [];
 
-		// Index of the last state.
 		var _current_state = -1;
-
-		// Index of the freeze state.
-		// The freeze state is the state where actions cannot be
-		// undone.
 		var _freeze_state = -1;
-
-		// The current set of strokes if strokes were to be
-		// rebuilt from
-		// history.
-		// Set to null to force refresh.
 		var _current_strokes = null;
 
 		self.add = function(action) {
@@ -550,8 +445,6 @@
 
 			_history.push(action);
 			_current_state = _history.length - 1;
-
-			// Reset current strokes.
 			_current_strokes = null;
 		};
 
@@ -570,8 +463,6 @@
 		self.undo = function() {
 			if (self.undoable()) {
 				_current_state--;
-
-				// Reset current strokes.
 				_current_strokes = null;
 			}
 		};
@@ -582,14 +473,11 @@
 
 		self.redo = function() {
 			if (self.redoable()) {
-				_current_state++;
-
-				// Reset current strokes.
+				_current_state++;				
 				_current_strokes = null;
 			}
 		};
-
-		// Rebuild the strokes from history.
+		
 		self.current_strokes = function() {
 			if (_current_strokes == null) {
 				var strokes = [];
@@ -600,7 +488,6 @@
 					case "json":
 					case "strokes":
 					case "batch":
-						//*r jQuery.merge(strokes, action.strokes);
 						strokes = strokes.concat(action.strokes);
 						break;
 					case "stroke":
@@ -637,7 +524,6 @@
 		var _width = 5;
 		var _offset = null;
 
-		// Drawing state
 		var _drawing = false;
 		var _c = null;
 		var _points = [];
@@ -687,19 +573,8 @@
 		self.start = function(e, sketchpad) {
 			_drawing = true;
 			
-			//*r _offset = $(sketchpad.container()).offset();
-			//_offset = Position.positionedOffset(sketchpad.container());
 			_offset = Position.cumulativeOffset(sketchpad.container());
 			
-			
-			//console.log("Event pointerX: " + Event.pointerX(e));
-			//console.log("Event pointerY: " + Event.pointerY(e));
-			//console.log("cumulativeoffsetx: " + Position.cumulativeOffset(sketchpad.container())[0]);
-			//console.log("cumulativeoffsetx: " + Position.cumulativeOffset(sketchpad.container())[1]);
-			//console.log("X: " + (Event.pointerX(e) - Position.cumulativeOffset(sketchpad.container())[0]));
-			//console.log("y: " + (Event.pointerY(e) - Position.cumulativeOffset(sketchpad.container())[1]));
-						
-			//*r var x = e.pageX - _offset.left, y = e.pageY - _offset.top;
 			var x = Event.pointerX(e) - _offset[0], y = Event.pointerY(e) - _offset[1];
 			_points.push([ x, y ]);
 
@@ -734,10 +609,7 @@
 
 		self.move = function(e, sketchpad) {
 			if (_drawing == true) {
-				//bug #2 need _offset
-				//_offset = Position.positionedOffset(sketchpad.container());
 				_offset = Position.cumulativeOffset(sketchpad.container());
-				//*r var x = e.pageX - _offset.left, y = e.pageY - _offset.top;
 				var x = Event.pointerX(e) - _offset[0], y = Event.pointerY(e) - _offset[1];
 				_points.push([ x, y ]);
 				_c.attr({
