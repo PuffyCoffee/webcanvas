@@ -1,24 +1,16 @@
-Using CanvasJS to draw awesome stuff on HTML5 canvas element!
+Draw awesome stuff on web!
 How to use it:  1. include prototype.js in your html file(http://prototypejs.org)
-                   <script type="text/javascript" src="javascript/prototype1.7.js"></script>
+                   <script type="text/javascript" src="prototype1.7.js"></script>
                 2. include canvas.js
-                   <script type="text/javascript" src="javascript/canvas.js"></script>
+                   <script type="text/javascript" src="sketchpad_prototype.js"></script>
                 3. put this at the end of your <body>:
                    <script>
                    canvas("your canvas id");
                    </script>
-
-
-Raphael-sketchpad is a cool JavaScript drawing library based on SVG library Raphael, jQuery and JSON.stringify.
-Raphael-sketchpad : http://ianli.com/sketchpad/
-Raphael : http://raphaeljs.com/
-jQuery  : http://jquery.com/
-JSON  : http://www.json.org/js.html
-
-Raphael-sketchpad prototype version is a prototypeJS version which supports ipad,
-it only requires prototype.js
+prototype.js
 prototype : http://prototypejs.org
 
-
+This content is released under the MIT License 
+(http://www.opensource.org/licenses/mit-license.php)
 
 Copy (c) 2012 Peng Zhang
