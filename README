@@ -1,14 +1,30 @@
 Draw awesome stuff on web!
-How to use it:  1. include prototype.js in your html file(http://prototypejs.org)
-                   <script type="text/javascript" src="prototype1.7.js"></script>
-                2. include canvas.js
-                   <script type="text/javascript" src="sketchpad_prototype.js"></script>
-                3. put this at the end of your <body>:
-                   <script>
-                   canvas("your canvas id");
-                   </script>
+How to use it:  1. Include required JavaScript libraries		   
+                   <script type="text/javascript" src="prototype1.7.js">
+		   </script>
+		   <script type="text/javascript" src="raphael.js>
+		   </script>
+                   <script type="text/javascript" src="sketchpad_prototype.js">
+		   </script>
+                3. create a div with id in your page, 
+		   <div id='wrapper' style="width:500px;height:300px">
+		   </div>
+		4. <script type="text/javascript">
+		   var paper = Raphael('wrapper',{
+			          width:"100%",
+				  height:"100%"
+		   paper.editing = true; 
+		   </script>
+		5. You can even add more cool stuff using Raphael.js
+		   Example:
+		   paper.circle(x, y, r).attr({
+		   	fill : "#f00"
+		   });
+
 prototype.js
-prototype : http://prototypejs.org
+http://prototypejs.org
+Raphael.js
+http://raphaeljs.com
 
 This content is released under the MIT License 
 (http://www.opensource.org/licenses/mit-license.php)
